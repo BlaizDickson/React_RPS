@@ -2,21 +2,29 @@ import React, { useState } from 'react';
 import Rock from './Rock';
 import Paper from './Paper';
 import Scissors from './Scissors';
+import './Game.css'; // Import the CSS file
 
 const Game = () => {
   const [playerChoice, setPlayerChoice] = useState(null);
   const [computerChoice, setComputerChoice] = useState(null);
   const [result, setResult] = useState(null);
-  const [round, setRound] = useState(1);
+  const [round, setRound] = useState(0);
   const [playerScore, setPlayerScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
 
   const handlePlayerChoice = (choice) => {
+    if (gameOver) {
+      return; // Disable player choice if the game is over
+    }
     setPlayerChoice(choice);
     setComputerChoice(getRandomChoice());
     setResult(getWinner(choice, computerChoice));
     updateScore();
     setRound(round + 1);
+    if (round === 4) {
+      setGameOver(true); // Set game over when the last round is reached
+    }
   };
 
   const getRandomChoice = () => {
@@ -25,7 +33,17 @@ const Game = () => {
   };
 
   const getWinner = (player, computer) => {
-    // Add your logic to determine the winner based on the choices
+    if (player === computer) {
+      return 'It\'s a tie!';
+    } else if (
+      (player === 'rock' && computer === 'scissors') ||
+      (player === 'paper' && computer === 'rock') ||
+      (player === 'scissors' && computer === 'paper')
+    ) {
+      return 'Player wins!';
+    } else {
+      return 'Computer wins!';
+    }
   };
 
   const updateScore = () => {
@@ -46,22 +64,37 @@ const Game = () => {
     }
   };
 
+  const resetGame = () => {
+    setPlayerChoice(null);
+    setComputerChoice(null);
+    setResult(null);
+    setRound(0);
+    setPlayerScore(0);
+    setComputerScore(0);
+    setGameOver(false);
+  };
+
   return (
-    <div>
+    <div className="game-container">
       <h1>Rock Paper Scissors</h1>
-      <div>
+      <div className="choices-container">
         <Rock onClick={() => handlePlayerChoice('rock')} />
         <Paper onClick={() => handlePlayerChoice('paper')} />
         <Scissors onClick={() => handlePlayerChoice('scissors')} />
       </div>
-      {result && <p>{result}</p>}
-      {round <= 5 ? (
-        <p>Round: {round}</p>
-      ) : (
+      {result && (
+        <p className="result">
+          Round {round}: {result}
+        </p>
+      )}
+      {gameOver ? (
         <div>
           <p>Game Over!</p>
           <p>{announceWinner()}</p>
+          <button onClick={resetGame}>Play Again</button>
         </div>
+      ) : (
+        <p>Round: {round}</p>
       )}
     </div>
   );
