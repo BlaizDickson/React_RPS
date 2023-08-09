@@ -5,7 +5,7 @@ import Scissors from './Scissors';
 import './Game.css'; // Import the CSS file
 
 const Game = () => {
-  const [playerChoice, setPlayerChoice] = useState(null);
+  const [playerChoice, setPlayerChoice] = useState(null);//
   const [computerChoice, setComputerChoice] = useState(null);
   const [result, setResult] = useState(null);
   const [round, setRound] = useState(0);
